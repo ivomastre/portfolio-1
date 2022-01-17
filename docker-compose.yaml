@@ -1,0 +1,21 @@
+# v2.1 syntax
+version: "2.1"
+
+volumes:
+  portfolio-1-mysql-data:
+    driver: local
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    container_name: portfolio-1-mysql
+    volumes:
+      - portfolio-1-mysql-data:/var/lib/mysql:Z
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_USER: "root"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_ROOT_PASSWORD: "secret"
