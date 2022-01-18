@@ -12,6 +12,8 @@ declare let process: {
     DB_PASSWORD: string;
     DB_NAME: string;
     DB_LOGS: boolean;
+    JWT_SECRET: string;
+    JWT_EXPIRES_IN?: string;
   };
 };
 
@@ -26,4 +28,6 @@ export const {
   DB_PASSWORD = "secret",
   DB_NAME = "test",
   DB_LOGS = true,
+  JWT_SECRET = 'secret',
+  JWT_EXPIRES_IN,
 } = process.env;

@@ -18,6 +18,12 @@ async function setup() {
 
   const apolloServer = new ApolloServer({
     schema,
+    context: ({ req }) => {
+      const context = {
+        req,
+      };
+      return context;
+    },
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
