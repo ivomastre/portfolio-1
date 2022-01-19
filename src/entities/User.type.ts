@@ -1,5 +1,13 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
+} from "typeorm";
 import { passwordsHelper } from "../helpers";
 
 @Entity()
@@ -15,9 +23,9 @@ export default class User {
 
   @Field(() => String)
   @Column({ unique: true })
-  email: string
-  
-  @Column({ select: false })
+  email: string;
+
+  @Column()
   password: string;
 
   @Field(() => Date)

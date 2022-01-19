@@ -1,15 +1,23 @@
-import {Arg, Args, Field, InputType, Mutation, ObjectType, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Field,
+  InputType,
+  Mutation,
+  ObjectType,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { User } from "../entities";
 import { jwtHelper, passwordsHelper } from "../helpers";
-import ensureUserIsAuthenticated from "../middlewares/ensureUserIsAuthenticated";
 
 @ObjectType()
 class AuthResponse {
   @Field()
   user: User;
   @Field()
-  token: string
+  token: string;
 }
 
 @InputType()
@@ -32,21 +40,22 @@ class LoginInputs {
 
 @Resolver()
 export default class AuthResolver {
-  @Mutation(() => AuthResponse)
-  async login(@Arg("inputs") { email, password }: LoginInputs): Promise<AuthResponse> {
-    const user = await AuthResolver.validatePassword(
-      email,
-      password
-    );
+  @Mutation((returns) => AuthResponse)
+  async login(
+    @Arg("inputs") { email, password }: LoginInputs
+  ): Promise<AuthResponse> {
+    const user = await AuthResolver.validatePassword(email, password);
 
     return {
       user,
       token: jwtHelper.generateToken(user.id),
     };
-  };
+  }
 
-  @Mutation(() => User)
-  async register(@Arg("inputs") { email, name, password }: RegisterInputs): Promise<User> {
+  @Mutation((returns) => User)
+  async register(
+    @Arg("inputs") { email, name, password }: RegisterInputs
+  ): Promise<User> {
     const usersRepo = getRepository(User);
 
     const user = usersRepo.create({
@@ -65,13 +74,6 @@ export default class AuthResolver {
 
     const user = await usersRepo.findOne({
       where: { email },
-      select: [
-        'id',
-        'name',
-        'email',
-        'password',
-        'createdAt',
-      ],
     });
 
     if (!user) {
