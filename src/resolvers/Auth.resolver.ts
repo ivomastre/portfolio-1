@@ -11,6 +11,7 @@ import {
 import { getRepository } from "typeorm";
 import { User } from "../entities";
 import { jwtHelper, passwordsHelper } from "../helpers";
+import { LoginInputs, RegisterInputs } from "../inputs/auth";
 
 @ObjectType()
 class AuthResponse {
@@ -18,24 +19,6 @@ class AuthResponse {
   user: User;
   @Field()
   token: string;
-}
-
-@InputType()
-class RegisterInputs {
-  @Field()
-  name: string;
-  @Field()
-  email: string;
-  @Field()
-  password: string;
-}
-
-@InputType()
-class LoginInputs {
-  @Field()
-  email: string;
-  @Field()
-  password: string;
 }
 
 @Resolver()

@@ -17,4 +17,12 @@ export class UserResolver {
 
     return userRepo.find();
   }
+
+  @Query((returns) => [User])
+  @UseMiddleware(ensureUserIsAuthenticated)
+  async updateUser() {
+    const userRepo = getRepository(User);
+
+    return userRepo.find();
+  }
 }
