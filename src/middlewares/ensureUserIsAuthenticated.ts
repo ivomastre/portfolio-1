@@ -2,7 +2,7 @@ import { MiddlewareFn } from "type-graphql";
 
 import { jwtHelper } from "../helpers";
 
-interface IContext {
+export interface IContext {
   req: {
     headers: {
       authorization: string;

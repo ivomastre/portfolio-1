@@ -3,10 +3,17 @@ import {
   Query,
   ResolverInterface,
   UseMiddleware,
+  Arg,
+  Mutation,
+  Ctx,
 } from "type-graphql";
 import { User } from "../entities";
 import { getRepository } from "typeorm";
-import ensureUserIsAuthenticated from "../middlewares/ensureUserIsAuthenticated";
+import ensureUserIsAuthenticated, {
+  IContext,
+} from "../middlewares/ensureUserIsAuthenticated";
+import { UpdateUserInputs } from "../inputs/user";
+import { Context } from "apollo-server-core";
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -18,11 +25,18 @@ export class UserResolver {
     return userRepo.find();
   }
 
-  @Query((returns) => [User])
+  @Mutation((returns) => User)
   @UseMiddleware(ensureUserIsAuthenticated)
-  async updateUser() {
+  async updateUser(
+    @Arg("inputs") inputs: UpdateUserInputs,
+    @Ctx() ctx: Context<IContext>
+  ) {
     const userRepo = getRepository(User);
+    const user = await userRepo.findOneOrFail(ctx.user.id);
 
-    return userRepo.find();
+    return userRepo.save({
+      ...user,
+      ...inputs,
+    });
   }
 }
