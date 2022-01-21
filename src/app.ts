@@ -2,6 +2,7 @@ import "reflect-metadata";
 
 import cors from "cors";
 import express, { Application } from "express";
+import ensureUserIsAuthenticated from "./middlewares/ensureUserIsAuthenticated";
 
 class App {
   public readonly express: Application;

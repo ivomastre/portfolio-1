@@ -1,3 +1,5 @@
 # portfolio-1
 
-TODO: commitlint, prettier, crud user, auth, ci (github actions), elasticsearch
+TODO: prettier, refactor service/repository, view, autorization
+
+FOR THE FUTURE: ci (github actions), elasticsearch
