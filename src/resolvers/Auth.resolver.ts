@@ -1,10 +1,13 @@
+import { Context } from "apollo-server-core";
 import {
   Arg,
   Args,
+  Ctx,
   Field,
   InputType,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
@@ -12,6 +15,9 @@ import { getRepository } from "typeorm";
 import { User } from "../entities";
 import { jwtHelper, passwordsHelper } from "../helpers";
 import { LoginInputs, RegisterInputs } from "../inputs/auth";
+import ensureUserIsAuthenticated, {
+  IContext,
+} from "../middlewares/ensureUserIsAuthenticated";
 
 @ObjectType()
 class AuthResponse {
@@ -50,6 +56,14 @@ export default class AuthResolver {
     await usersRepo.save(user);
 
     return user;
+  }
+
+  @Query((returns) => User)
+  @UseMiddleware(ensureUserIsAuthenticated)
+  async me(@Ctx() ctx: Context<IContext>): Promise<User> {
+    const usersRepo = getRepository(User);
+
+    return usersRepo.findOneOrFail(ctx.user.id);
   }
 
   private static async getUserByEmail(email: string): Promise<User> {

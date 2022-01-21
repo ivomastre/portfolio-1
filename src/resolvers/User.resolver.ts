@@ -6,6 +6,8 @@ import {
   Arg,
   Mutation,
   Ctx,
+  Field,
+  ObjectType,
 } from "type-graphql";
 import { User } from "../entities";
 import { getRepository } from "typeorm";
@@ -14,6 +16,12 @@ import ensureUserIsAuthenticated, {
 } from "../middlewares/ensureUserIsAuthenticated";
 import { UpdateUserInputs } from "../inputs/user";
 import { Context } from "apollo-server-core";
+
+@ObjectType()
+class DeleteUserResponse {
+  @Field()
+  ok: boolean;
+}
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -38,5 +46,17 @@ export class UserResolver {
       ...user,
       ...inputs,
     });
+  }
+
+  @Mutation((returns) => DeleteUserResponse)
+  @UseMiddleware(ensureUserIsAuthenticated)
+  async deleteUser(@Ctx() ctx: Context<IContext>) {
+    const userRepo = getRepository(User);
+    const user = await userRepo.findOneOrFail(ctx.user.id);
+
+    await userRepo.delete(user.id);
+    return {
+      ok: true,
+    };
   }
 }
