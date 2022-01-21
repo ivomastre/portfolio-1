@@ -1,1 +1,1 @@
-export { default as UpdateUserInputs } from "./update.input";
+export { default as UpdateUserInputs } from './update.input';

@@ -1,4 +1,4 @@
-import { ConnectionOptions } from "typeorm";
+import { ConnectionOptions } from 'typeorm';
 
 import {
   DB_TYPE,
@@ -10,9 +10,9 @@ import {
   DB_NAME,
   DB_LOGS,
   NODE_ENV,
-} from "./env";
+} from './env';
 
-const folderName = NODE_ENV === "production" ? "dist" : "src";
+const folderName = NODE_ENV === 'production' ? 'dist' : 'src';
 
 const dbConfig: ConnectionOptions = {
   type: DB_TYPE,
@@ -31,7 +31,7 @@ if (DB_URL) {
     port: DB_PORT,
     username: DB_USERNAME,
     password: DB_PASSWORD,
-    database: NODE_ENV === "test" ? `${DB_NAME}_test` : DB_NAME,
+    database: NODE_ENV === 'test' ? `${DB_NAME}_test` : DB_NAME,
     logging: DB_LOGS,
   });
 }

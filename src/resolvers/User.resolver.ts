@@ -1,21 +1,21 @@
+import { Context } from 'apollo-server-core';
 import {
+  Arg,
   Resolver,
   Query,
-  ResolverInterface,
   UseMiddleware,
-  Arg,
   Mutation,
   Ctx,
   Field,
   ObjectType,
-} from "type-graphql";
-import { User } from "../entities";
-import { getRepository } from "typeorm";
+} from 'type-graphql';
+import { getRepository } from 'typeorm';
+
+import { User } from '../entities';
+import { UpdateUserInputs } from '../inputs/user';
 import ensureUserIsAuthenticated, {
   IContext,
-} from "../middlewares/ensureUserIsAuthenticated";
-import { UpdateUserInputs } from "../inputs/user";
-import { Context } from "apollo-server-core";
+} from '../middlewares/ensureUserIsAuthenticated';
 
 @ObjectType()
 class DeleteUserResponse {
@@ -23,9 +23,9 @@ class DeleteUserResponse {
   ok: boolean;
 }
 
-@Resolver((of) => User)
+@Resolver(of => User)
 export class UserResolver {
-  @Query((returns) => [User])
+  @Query(returns => [User])
   @UseMiddleware(ensureUserIsAuthenticated)
   async users() {
     const userRepo = getRepository(User);
@@ -33,10 +33,10 @@ export class UserResolver {
     return userRepo.find();
   }
 
-  @Mutation((returns) => User)
+  @Mutation(returns => User)
   @UseMiddleware(ensureUserIsAuthenticated)
   async updateUser(
-    @Arg("inputs") inputs: UpdateUserInputs,
+    @Arg('inputs') inputs: UpdateUserInputs,
     @Ctx() ctx: Context<IContext>
   ) {
     const userRepo = getRepository(User);
@@ -48,7 +48,7 @@ export class UserResolver {
     });
   }
 
-  @Mutation((returns) => DeleteUserResponse)
+  @Mutation(returns => DeleteUserResponse)
   @UseMiddleware(ensureUserIsAuthenticated)
   async deleteUser(@Ctx() ctx: Context<IContext>) {
     const userRepo = getRepository(User);

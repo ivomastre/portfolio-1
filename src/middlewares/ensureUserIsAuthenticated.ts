@@ -1,6 +1,6 @@
-import { MiddlewareFn } from "type-graphql";
+import { MiddlewareFn } from 'type-graphql';
 
-import { jwtHelper } from "../helpers";
+import { jwtHelper } from '../helpers';
 
 export interface IContext {
   req: {
@@ -20,11 +20,11 @@ const ensureUserIsAuthenticated: MiddlewareFn<IContext> = async (
   const authHeader = context.req.headers.authorization;
 
   if (!authHeader) {
-    throw new Error("Token is missing.");
+    throw new Error('Token is missing.');
   }
 
   try {
-    const [, token] = authHeader.split(" ");
+    const [, token] = authHeader.split(' ');
     const validToken = jwtHelper.verifyToken(token);
 
     const { sub } = validToken;
@@ -35,7 +35,7 @@ const ensureUserIsAuthenticated: MiddlewareFn<IContext> = async (
 
     return next();
   } catch {
-    throw new Error("Invalid token.");
+    throw new Error('Invalid token.');
   }
 };
 

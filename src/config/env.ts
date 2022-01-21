@@ -1,10 +1,10 @@
-import "dotenv/config";
+import 'dotenv/config';
 
 declare let process: {
   env: {
-    NODE_ENV: "production" | "dev" | "test";
+    NODE_ENV: 'production' | 'dev' | 'test';
     PORT: number;
-    DB_TYPE: "mysql" | "postgres" | "oracle" | "mongodb";
+    DB_TYPE: 'mysql' | 'postgres' | 'oracle' | 'mongodb';
     DB_URL?: string;
     DB_HOST: string;
     DB_PORT: number;
@@ -18,15 +18,15 @@ declare let process: {
 };
 
 export const {
-  NODE_ENV = "dev",
+  NODE_ENV = 'dev',
   PORT = 4000,
-  DB_TYPE = "mysql",
+  DB_TYPE = 'mysql',
   DB_URL,
-  DB_HOST = "localhost",
+  DB_HOST = 'localhost',
   DB_PORT = 3306,
-  DB_USERNAME = "root",
-  DB_PASSWORD = "secret",
-  DB_NAME = "test",
+  DB_USERNAME = 'root',
+  DB_PASSWORD = 'secret',
+  DB_NAME = 'test',
   DB_LOGS = true,
   JWT_SECRET = 'secret',
   JWT_EXPIRES_IN,

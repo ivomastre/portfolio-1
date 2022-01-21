@@ -1,37 +1,37 @@
-import { Context } from "apollo-server-core";
+import { Context } from 'apollo-server-core';
 import {
   Arg,
-  Args,
   Ctx,
   Field,
-  InputType,
   Mutation,
   ObjectType,
   Query,
   Resolver,
   UseMiddleware,
-} from "type-graphql";
-import { getRepository } from "typeorm";
-import { User } from "../entities";
-import { jwtHelper, passwordsHelper } from "../helpers";
-import { LoginInputs, RegisterInputs } from "../inputs/auth";
+} from 'type-graphql';
+import { getRepository } from 'typeorm';
+
+import { User } from '../entities';
+import { jwtHelper, passwordsHelper } from '../helpers';
+import { LoginInputs, RegisterInputs } from '../inputs/auth';
 import ensureUserIsAuthenticated, {
   IContext,
-} from "../middlewares/ensureUserIsAuthenticated";
+} from '../middlewares/ensureUserIsAuthenticated';
 
 @ObjectType()
 class AuthResponse {
   @Field()
   user: User;
+
   @Field()
   token: string;
 }
 
 @Resolver()
 export default class AuthResolver {
-  @Mutation((returns) => AuthResponse)
+  @Mutation(returns => AuthResponse)
   async login(
-    @Arg("inputs") { email, password }: LoginInputs
+    @Arg('inputs') { email, password }: LoginInputs
   ): Promise<AuthResponse> {
     const user = await AuthResolver.validatePassword(email, password);
 
@@ -41,9 +41,9 @@ export default class AuthResolver {
     };
   }
 
-  @Mutation((returns) => User)
+  @Mutation(returns => User)
   async register(
-    @Arg("inputs") { email, name, password }: RegisterInputs
+    @Arg('inputs') { email, name, password }: RegisterInputs
   ): Promise<User> {
     const usersRepo = getRepository(User);
 
@@ -58,7 +58,7 @@ export default class AuthResolver {
     return user;
   }
 
-  @Query((returns) => User)
+  @Query(returns => User)
   @UseMiddleware(ensureUserIsAuthenticated)
   async me(@Ctx() ctx: Context<IContext>): Promise<User> {
     const usersRepo = getRepository(User);
@@ -74,7 +74,7 @@ export default class AuthResolver {
     });
 
     if (!user) {
-      throw new Error("Incorrect email/password");
+      throw new Error('Incorrect email/password');
     }
 
     return user;
@@ -92,7 +92,7 @@ export default class AuthResolver {
     );
 
     if (!isPasswordsEqual) {
-      throw new Error("Incorrect email/password");
+      throw new Error('Incorrect email/password');
     }
 
     return user;

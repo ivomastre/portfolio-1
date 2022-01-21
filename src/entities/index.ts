@@ -1,1 +1,1 @@
-export { default as User } from "./User.type";
+export { default as User } from './User.type';

@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID } from 'type-graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,14 +7,15 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
-} from "typeorm";
-import { passwordsHelper } from "../helpers";
+} from 'typeorm';
+
+import { passwordsHelper } from '../helpers';
 
 @Entity()
-@ObjectType({ description: "User" })
+@ObjectType({ description: 'User' })
 export default class User {
   @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field(() => String)
