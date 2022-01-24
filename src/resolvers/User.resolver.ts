@@ -13,9 +13,7 @@ import { getRepository } from 'typeorm';
 
 import { User } from '../entities';
 import { UpdateUserInputs } from '../inputs/user';
-import ensureUserIsAuthenticated, {
-  IContext,
-} from '../middlewares/ensureUserIsAuthenticated';
+import ensureUserIsAuthenticated from '../middlewares/ensureUserIsAuthenticated';
 
 @ObjectType()
 class DeleteUserResponse {
@@ -37,7 +35,7 @@ export class UserResolver {
   @UseMiddleware(ensureUserIsAuthenticated)
   async updateUser(
     @Arg('inputs') inputs: UpdateUserInputs,
-    @Ctx() ctx: Context<IContext>
+    @Ctx() ctx: Context
   ) {
     const userRepo = getRepository(User);
     const user = await userRepo.findOneOrFail(ctx.user.id);
@@ -50,7 +48,7 @@ export class UserResolver {
 
   @Mutation(returns => DeleteUserResponse)
   @UseMiddleware(ensureUserIsAuthenticated)
-  async deleteUser(@Ctx() ctx: Context<IContext>) {
+  async deleteUser(@Ctx() ctx: Context) {
     const userRepo = getRepository(User);
     const user = await userRepo.findOneOrFail(ctx.user.id);
 

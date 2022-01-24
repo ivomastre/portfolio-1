@@ -1,19 +1,9 @@
+import { Context } from 'apollo-server-core';
 import { MiddlewareFn } from 'type-graphql';
 
 import { jwtHelper } from '../helpers';
 
-export interface IContext {
-  req: {
-    headers: {
-      authorization: string;
-    };
-  };
-  user: {
-    id: string;
-  };
-}
-
-const ensureUserIsAuthenticated: MiddlewareFn<IContext> = async (
+const ensureUserIsAuthenticated: MiddlewareFn<Context> = async (
   { context },
   next
 ) => {

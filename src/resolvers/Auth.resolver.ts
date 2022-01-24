@@ -14,9 +14,7 @@ import { getRepository } from 'typeorm';
 import { User } from '../entities';
 import { jwtHelper, passwordsHelper } from '../helpers';
 import { LoginInputs, RegisterInputs } from '../inputs/auth';
-import ensureUserIsAuthenticated, {
-  IContext,
-} from '../middlewares/ensureUserIsAuthenticated';
+import ensureUserIsAuthenticated from '../middlewares/ensureUserIsAuthenticated';
 
 @ObjectType()
 class AuthResponse {
@@ -60,7 +58,7 @@ export default class AuthResolver {
 
   @Query(returns => User)
   @UseMiddleware(ensureUserIsAuthenticated)
-  async me(@Ctx() ctx: Context<IContext>): Promise<User> {
+  async me(@Ctx() ctx: Context): Promise<User> {
     const usersRepo = getRepository(User);
 
     return usersRepo.findOneOrFail(ctx.user.id);
