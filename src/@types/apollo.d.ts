@@ -1,5 +1,5 @@
-declare module 'apollo-server-core' {
-  export interface Context {
+export declare module 'apollo-server-core' {
+  type Context = {
     req: {
       headers: {
         authorization: string;
@@ -8,5 +8,5 @@ declare module 'apollo-server-core' {
     user: {
       id: string;
     };
-  }
+  };
 }

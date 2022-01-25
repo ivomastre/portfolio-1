@@ -6,29 +6,34 @@ import {
   UseMiddleware,
   Mutation,
   Ctx,
-  Field,
-  ObjectType,
 } from 'type-graphql';
-import { getRepository } from 'typeorm';
+import { Service } from 'typedi';
 
 import { User } from '../entities';
 import { UpdateUserInputs } from '../inputs/user';
 import ensureUserIsAuthenticated from '../middlewares/ensureUserIsAuthenticated';
+import {
+  FindAllUsersService,
+  UpdateUserService,
+  DeleteUserService,
+  DeleteUserResponse,
+} from '../services/users';
 
-@ObjectType()
-class DeleteUserResponse {
-  @Field()
-  ok: boolean;
-}
-
+@Service()
 @Resolver(of => User)
 export class UserResolver {
+  constructor(
+    private readonly findAllUsersService: FindAllUsersService,
+    private readonly updateUserService: UpdateUserService,
+    private readonly deleteUserService: DeleteUserService
+  ) {}
+
   @Query(returns => [User])
   @UseMiddleware(ensureUserIsAuthenticated)
   async users() {
-    const userRepo = getRepository(User);
+    const users = await this.findAllUsersService.execute();
 
-    return userRepo.find();
+    return users;
   }
 
   @Mutation(returns => User)
@@ -37,24 +42,14 @@ export class UserResolver {
     @Arg('inputs') inputs: UpdateUserInputs,
     @Ctx() ctx: Context
   ) {
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOneOrFail(ctx.user.id);
+    const user = await this.updateUserService.execute(inputs, ctx);
 
-    return userRepo.save({
-      ...user,
-      ...inputs,
-    });
+    return user;
   }
 
   @Mutation(returns => DeleteUserResponse)
   @UseMiddleware(ensureUserIsAuthenticated)
   async deleteUser(@Ctx() ctx: Context) {
-    const userRepo = getRepository(User);
-    const user = await userRepo.findOneOrFail(ctx.user.id);
-
-    await userRepo.delete(user.id);
-    return {
-      ok: true,
-    };
+    return this.deleteUserService.execute(ctx.user.id);
   }
 }

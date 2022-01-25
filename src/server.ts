@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
+import 'reflect-metadata';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
 import http from 'http';
 import { buildSchema } from 'type-graphql';
+import { Container } from 'typedi';
 
 import App from './app';
 import { PORT } from './config/env';
@@ -14,6 +16,7 @@ async function setup() {
 
   const schema = await buildSchema({
     resolvers: [`${__dirname}/resolvers/**/*.ts`],
+    container: Container,
   });
 
   const apolloServer = new ApolloServer({
