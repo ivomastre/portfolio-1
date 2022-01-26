@@ -1,4 +1,3 @@
-import { Context } from 'apollo-server-core';
 import { Service } from 'typedi';
 import { getRepository } from 'typeorm';
 
@@ -8,14 +7,14 @@ import { UpdateUserInputs } from '../../inputs/user';
 type IUpdateUserReturn = Promise<User>;
 
 interface IUpdateUserService {
-  execute(inputs: UpdateUserInputs, ctx: Context): IUpdateUserReturn;
+  execute(inputs: UpdateUserInputs, userId: string): IUpdateUserReturn;
 }
 
 @Service()
 class UpdateUserService implements IUpdateUserService {
-  execute = async (inputs: UpdateUserInputs, ctx: Context): Promise<User> => {
+  execute = async (inputs: UpdateUserInputs, userId: string) => {
     const userRepo = getRepository(User);
-    const user = await userRepo.findOneOrFail(ctx.user.id);
+    const user = await userRepo.findOneOrFail(userId);
 
     return userRepo.save({
       ...user,

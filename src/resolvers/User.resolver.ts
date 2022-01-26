@@ -42,7 +42,7 @@ export class UserResolver {
     @Arg('inputs') inputs: UpdateUserInputs,
     @Ctx() ctx: Context
   ) {
-    const user = await this.updateUserService.execute(inputs, ctx);
+    const user = await this.updateUserService.execute(inputs, ctx.user.id);
 
     return user;
   }

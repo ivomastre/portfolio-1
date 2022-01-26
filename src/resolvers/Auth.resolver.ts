@@ -9,12 +9,17 @@ import {
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
-import { getRepository } from 'typeorm';
+import { Service } from 'typedi';
 
 import { User } from '../entities';
-import { jwtHelper, passwordsHelper } from '../helpers';
+import { jwtHelper } from '../helpers';
 import { LoginInputs, RegisterInputs } from '../inputs/auth';
 import ensureUserIsAuthenticated from '../middlewares/ensureUserIsAuthenticated';
+import {
+  CreateUserService,
+  LoginService,
+  ShowUserLoggedService,
+} from '../services/auth';
 
 @ObjectType()
 class AuthResponse {
@@ -25,13 +30,18 @@ class AuthResponse {
   token: string;
 }
 
+@Service()
 @Resolver()
 export default class AuthResolver {
+  constructor(
+    private readonly createUserService: CreateUserService,
+    private readonly loginService: LoginService,
+    private readonly showUserLoggedService: ShowUserLoggedService
+  ) {}
+
   @Mutation(returns => AuthResponse)
-  async login(
-    @Arg('inputs') { email, password }: LoginInputs
-  ): Promise<AuthResponse> {
-    const user = await AuthResolver.validatePassword(email, password);
+  async login(@Arg('inputs') data: LoginInputs): Promise<AuthResponse> {
+    const user = await this.loginService.execute(data);
 
     return {
       user,
@@ -40,18 +50,8 @@ export default class AuthResolver {
   }
 
   @Mutation(returns => User)
-  async register(
-    @Arg('inputs') { email, name, password }: RegisterInputs
-  ): Promise<User> {
-    const usersRepo = getRepository(User);
-
-    const user = usersRepo.create({
-      name,
-      email,
-      password,
-    });
-
-    await usersRepo.save(user);
+  async register(@Arg('inputs') data: RegisterInputs): Promise<User> {
+    const user = await this.createUserService.execute(data);
 
     return user;
   }
@@ -59,39 +59,7 @@ export default class AuthResolver {
   @Query(returns => User)
   @UseMiddleware(ensureUserIsAuthenticated)
   async me(@Ctx() ctx: Context): Promise<User> {
-    const usersRepo = getRepository(User);
-
-    return usersRepo.findOneOrFail(ctx.user.id);
-  }
-
-  private static async getUserByEmail(email: string): Promise<User> {
-    const usersRepo = getRepository(User);
-
-    const user = await usersRepo.findOne({
-      where: { email },
-    });
-
-    if (!user) {
-      throw new Error('Incorrect email/password');
-    }
-
-    return user;
-  }
-
-  private static async validatePassword(
-    email: string,
-    password: string
-  ): Promise<User> {
-    const user = await AuthResolver.getUserByEmail(email);
-
-    const isPasswordsEqual = await passwordsHelper.compareHashs(
-      user.password,
-      password
-    );
-
-    if (!isPasswordsEqual) {
-      throw new Error('Incorrect email/password');
-    }
+    const user = await this.showUserLoggedService.execute(ctx.user.id);
 
     return user;
   }
