@@ -18,6 +18,7 @@ import {
   DeleteUserService,
   DeleteUserResponse,
 } from '../services/users';
+import { UpdateUserResponse } from '../services/users/UpdateUser.service';
 
 @Service()
 @Resolver(of => User)
@@ -31,20 +32,16 @@ export class UserResolver {
   @Query(returns => [User])
   @UseMiddleware(ensureUserIsAuthenticated)
   async users() {
-    const users = await this.findAllUsersService.execute();
-
-    return users;
+    return this.findAllUsersService.execute();
   }
 
-  @Mutation(returns => User)
+  @Mutation(returns => UpdateUserResponse)
   @UseMiddleware(ensureUserIsAuthenticated)
   async updateUser(
     @Arg('inputs') inputs: UpdateUserInputs,
     @Ctx() ctx: Context
   ) {
-    const user = await this.updateUserService.execute(inputs, ctx.user.id);
-
-    return user;
+    return this.updateUserService.execute(inputs, ctx.user.id);
   }
 
   @Mutation(returns => DeleteUserResponse)

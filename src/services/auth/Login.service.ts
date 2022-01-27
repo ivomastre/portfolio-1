@@ -12,12 +12,6 @@ interface IRequest {
 @Service()
 class LoginService {
   execute = async ({ email, password }: IRequest): Promise<User> => {
-    const user = await LoginService.validatePassword(email, password);
-
-    return user;
-  };
-
-  private static async getUserByEmail(email: string): Promise<User> {
     const usersRepo = getRepository(User);
 
     const user = await usersRepo.findOne({
@@ -27,15 +21,6 @@ class LoginService {
     if (!user) {
       throw new Error('Incorrect email/password');
     }
-
-    return user;
-  }
-
-  private static async validatePassword(
-    email: string,
-    password: string
-  ): Promise<User> {
-    const user = await LoginService.getUserByEmail(email);
 
     const isPasswordsEqual = await passwordsHelper.compareHashs(
       user.password,
@@ -47,7 +32,7 @@ class LoginService {
     }
 
     return user;
-  }
+  };
 }
 
 export default LoginService;
