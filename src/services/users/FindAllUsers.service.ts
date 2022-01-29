@@ -1,12 +1,17 @@
+import { ObjectType, Field } from 'type-graphql';
 import { Service } from 'typedi';
 import { getRepository } from 'typeorm';
 
 import { User } from '../../entities';
 
-type IFindAllUsersReturn = Promise<User[]>;
+@ObjectType()
+export class FindAllUsersResponse {
+  @Field(() => [User])
+  users: User[];
+}
 
 interface IFindAllUsersService {
-  execute(): IFindAllUsersReturn;
+  execute(): Promise<FindAllUsersResponse>;
 }
 
 @Service()
@@ -14,7 +19,8 @@ class FindAllUsersService implements IFindAllUsersService {
   execute = async () => {
     const userRepo = getRepository(User);
 
-    return userRepo.find();
+    const users = await userRepo.find();
+    return { users };
   };
 }
 

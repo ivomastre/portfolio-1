@@ -18,6 +18,7 @@ import {
   DeleteUserService,
   DeleteUserResponse,
 } from '../services/users';
+import { FindAllUsersResponse } from '../services/users/FindAllUsers.service';
 import { UpdateUserResponse } from '../services/users/UpdateUser.service';
 
 @Service()
@@ -29,9 +30,9 @@ export class UserResolver {
     private readonly deleteUserService: DeleteUserService
   ) {}
 
-  @Query(returns => [User])
+  @Query(returns => FindAllUsersResponse)
   @UseMiddleware(ensureUserIsAuthenticated)
-  async users() {
+  async findAllUsers() {
     return this.findAllUsersService.execute();
   }
 
