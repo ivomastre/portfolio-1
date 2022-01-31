@@ -1,17 +1,27 @@
+import { ObjectType, Field } from 'type-graphql';
 import { Service } from 'typedi';
 import { getRepository } from 'typeorm';
 
 import { User } from '../../entities';
-import { passwordsHelper } from '../../helpers';
+import { jwtHelper, passwordsHelper } from '../../helpers';
+import { LoginInputs } from '../../inputs/auth';
 
-interface IRequest {
-  email: string;
-  password: string;
+@ObjectType()
+export class LoginResponse {
+  @Field()
+  user: User;
+
+  @Field()
+  token: string;
+}
+
+interface ILoginService {
+  execute(data: LoginInputs): Promise<LoginResponse>;
 }
 
 @Service()
-class LoginService {
-  execute = async ({ email, password }: IRequest): Promise<User> => {
+class LoginService implements ILoginService {
+  execute = async ({ email, password }: LoginInputs) => {
     const usersRepo = getRepository(User);
 
     const user = await usersRepo.findOne({
@@ -31,7 +41,9 @@ class LoginService {
       throw new Error('Incorrect email/password');
     }
 
-    return user;
+    const token = jwtHelper.generateToken(user.id);
+
+    return { user, token };
   };
 }
 

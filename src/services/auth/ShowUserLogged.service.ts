@@ -1,15 +1,27 @@
+import { ObjectType, Field } from 'type-graphql';
 import { Service } from 'typedi';
 import { getRepository } from 'typeorm';
 
 import { User } from '../../entities';
 
+@ObjectType()
+export class ShowUserLoggedResponse {
+  @Field()
+  user: User;
+}
+
+interface IShowUserLoggedService {
+  execute(userId: string): Promise<ShowUserLoggedResponse>;
+}
 @Service()
-class ShowUserLogged {
-  execute = async (userId: string): Promise<User> => {
+class ShowUserLoggedService implements IShowUserLoggedService {
+  execute = async (userId: string): Promise<ShowUserLoggedResponse> => {
     const usersRepo = getRepository(User);
 
-    return usersRepo.findOneOrFail(userId);
+    const user = await usersRepo.findOneOrFail(userId);
+
+    return { user };
   };
 }
 
-export default ShowUserLogged;
+export default ShowUserLoggedService;
