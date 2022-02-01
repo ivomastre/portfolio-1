@@ -9,6 +9,7 @@ import { Container } from 'typedi';
 import App from './app';
 import { PORT } from './config/env';
 import createConnection from './database';
+import { customAuthChecker } from './helpers';
 
 async function setup() {
   const app = new App().express;
@@ -17,6 +18,7 @@ async function setup() {
   const schema = await buildSchema({
     resolvers: [`${__dirname}/resolvers/**/*.ts`],
     container: Container,
+    authChecker: customAuthChecker,
   });
 
   const apolloServer = new ApolloServer({
